@@ -10,13 +10,13 @@ import java.io.IOException
 import javax.inject.Inject
 
 class GetPokemonList @Inject constructor(
-    val repository: PokedexRepository
+    private val repository: PokedexRepository
 ) {
 
-    operator fun invoke(): Flow<Resource<List<Pokemon>>> = flow{
+    operator fun invoke(offset:Int, limit:Int): Flow<Resource<List<Pokemon>>> = flow{
         emit(Resource.Loading<List<Pokemon>>())
         try {
-            val pokemons = repository.getPokemonList(20,20).results.map{it.toPokemon()}
+            val pokemons = repository.getPokemonList(offset,limit).results.map{it.toPokemon()}
             emit(Resource.Success<List<Pokemon>>(data = pokemons))
         }catch (e:HttpException){
             emit(Resource.Error<List<Pokemon>>(msg ="Error http Exception"))

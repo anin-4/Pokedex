@@ -2,5 +2,6 @@ package com.example.pokedex.utils
 
 object Constants {
 
-    val TAG = "Debug"
+    const val TAG = "Debug"
+    const val PAGE_SIZE = 20
 }
