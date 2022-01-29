@@ -9,6 +9,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import com.example.pokedex.R
 import com.example.pokedex.presentation.pokemon_list.PokemonListState
 import com.example.pokedex.presentation.pokemon_list.components.CircularProgressBar
 import com.example.pokedex.presentation.pokemon_list.components.ErrorState
+import com.example.pokedex.presentation.pokemon_list.components.PokedexRow
 
 @Composable
 fun PokemonListScreen(
@@ -29,7 +32,9 @@ fun PokemonListScreen(
 ) {
 
     val state = viewModel.state.value
-
+    val currPage  = remember {
+        mutableStateOf(1)
+    }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
@@ -52,9 +57,15 @@ fun PokemonListScreen(
             }
             else{
                 LazyColumn(modifier = Modifier.fillMaxSize()){
-                    itemsIndexed(state.pokemonList){index, item ->
-
+                    val rows:Int = (state.pokemonList.size+1)/2
+                    items(rows){ index ->
+                        if(index >= rows-2){
+                            viewModel.loadNextPage(currPage.value)
+                            currPage.value+=1
+                        }
+                        PokedexRow(index,state.pokemonList)
                     }
+
                 }
             }
         }
